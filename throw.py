@@ -12,7 +12,7 @@ import re
 from datetime import datetime, timedelta
 from reducehtml import html_remover, html_mini_remover
 import openai
-from openai_functions import get_job_links,get_easy_apply_xpath
+from openai_functions import get_job_links,get_easy_apply_xpath,get_answers
 import pandas as pd
 import datetime
 
@@ -105,14 +105,19 @@ if __name__ == '__main__':
             form_parts=driver.find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,all_of_form_parts)
             form_parts_with_errors=[i for i in form_parts if i.find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,error_in_task)]
             if form_parts_with_errors:
-                print('complete form')
-                print([i.get_attribute('outerHTML') for i in form_parts_with_errors])
-                time.sleep(10000)
+                form_intents+=1
+                if form_intents>=2:
+                    break
+                #just do send keys and select
+                print(get_answers(str([i.get_attribute('outerHTML') for i in form_parts_with_errors])))
+                # time.sleep(10000)
             elif next_page:
+                form_intents=0
                 next_page[0].click()
             elif review:
+                form_intents=0
                 review[0].click()
-                time.sleep(10000)
+                # time.sleep(10000)
 
             time.sleep(3)
             # time.sleep(100000)
@@ -121,5 +126,6 @@ if __name__ == '__main__':
         simplified_html=html_mini_remover(html)
         # print(len(html),len(simplified_html))
         # print(len(easy_apply_button)) #.click()
+
         time.sleep(100000)
 
