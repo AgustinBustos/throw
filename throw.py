@@ -17,6 +17,11 @@ import pandas as pd
 import datetime
 
 easy_apply_selector='div.p5  button.jobs-apply-button'
+next_button_selector="button[aria-label='Continue to next step']"
+review_button_selector="button[aria-label='Review your application']"
+error_in_task='''div[role='alert'] li-icon[aria-hidden="true"]'''
+all_of_form_parts='div.jobs-easy-apply-form-section__grouping'
+
 
 links_to_use=[float(i.replace('links_to_use_later_','').replace('.csv','')) for i in os.listdir() if 'links_to_use_later_' in i]
 df=pd.read_csv(f'links_to_use_later_{max(links_to_use)}.csv')
@@ -93,9 +98,28 @@ if __name__ == '__main__':
         time.sleep(3)
         driver.find_element(selenium.webdriver.common.by.By.CSS_SELECTOR,easy_apply_selector).click()
         time.sleep(3)
+        form_intents=0
+        for i in range(10):
+            next_page=driver.find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,next_button_selector)
+            review=driver.find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,review_button_selector)
+            form_parts=driver.find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,all_of_form_parts)
+            form_parts_with_errors=[i for i in form_parts if i.find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,error_in_task)]
+            if form_parts_with_errors:
+                print('complete form')
+                print([i.get_attribute('outerHTML') for i in form_parts_with_errors])
+                time.sleep(10000)
+            elif next_page:
+                next_page[0].click()
+            elif review:
+                review[0].click()
+                time.sleep(10000)
+
+            time.sleep(3)
+            # time.sleep(100000)
+
         html = driver.page_source
         simplified_html=html_mini_remover(html)
-        print(len(html),len(simplified_html))
+        # print(len(html),len(simplified_html))
         # print(len(easy_apply_button)) #.click()
         time.sleep(100000)
 
