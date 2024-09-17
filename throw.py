@@ -26,16 +26,18 @@ submiter='''button[aria-label='Submit application']'''
 
 links_to_use=[float(i.replace('links_to_use_later_','').replace('.csv','')) for i in os.listdir() if 'links_to_use_later_' in i]
 df=pd.read_csv(f'links_to_use_later_{max(links_to_use)}.csv')
-todrop=df['jobs_link'].tolist()
-newdrop=[]
-for url in todrop:
+# todrop=df['jobs_link'].tolist()
+def get_id(url):
     try:
         splitted=url.split('/')
         jobid=splitted[splitted.index('view')+1]
-        newdrop.append(f'https://www.linkedin.com/jobs/view/{jobid}')
+        return f'https://www.linkedin.com/jobs/view/{jobid}'
     except:
-         pass
-
+        return 'NaN'
+df['job_id']=df['jobs_link'].apply(get_id)
+df['sent']='No'
+df.to_csv(f'links_to_use_later_{max(links_to_use)}.csv',index=False)
+newdrop=[i for i in df['job_id'].tolist() if i!='NaN']
 
 user_data_dir=r"C:\Users\TheQwertyPhoenix\AppData\Local\Google\Chrome\User Data"
 profile_directory='Profile 1'
@@ -139,6 +141,8 @@ if __name__ == '__main__':
             elif submit:
                 form_intents=0
                 submit[0].click()
+                df.loc[df['job_id']==url,'sent']='Yes'
+                df.to_csv(f'links_to_use_later_{max(links_to_use)}.csv',index=False)
                 # time.sleep(10000)
 
             time.sleep(3)
