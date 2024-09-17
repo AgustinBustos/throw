@@ -16,6 +16,9 @@ from openai_functions import get_job_links,get_easy_apply_xpath,get_answers
 import pandas as pd
 import datetime
 from selenium.webdriver.support.ui import Select
+from smtplib import SMTP
+from config import account_sid, auth_token, fromphone, myphone, apppasswords, receiveremail,email,text
+
 pyautogui.FAILSAFE = False
 
 
@@ -127,7 +130,7 @@ def responder(form_parts_with_errors,index,i):
 if __name__ == '__main__':
     driver=open_browser(user_data_dir,profile_directory,'https://www.google.com/')
     time.sleep(10)
-    
+    all_errors=[]
     for url in newdrop:
         time.sleep(random.choice([i for i in range(10)]))
         try:
@@ -191,8 +194,22 @@ if __name__ == '__main__':
 
             # time.sleep(100000)
         except Exception as e:
+            all_errors.append(e)
             time.sleep(1)
             # print(e)
             # time.sleep(100000)
         # time.sleep(10000)
+    if len(df[df['sent']=='Yes'])==0:
+        with SMTP('smtp.gmail.com', 587) as smtp:
+            
+            smtp.starttls()
+            smtp.login(email,apppasswords)
+            smtp.sendmail(email,receiveremail,f"Subject: bot linked scrap done\n\nbroo"+str(all_errors))
+    else:
+        with SMTP('smtp.gmail.com', 587) as smtp:
+            
+            smtp.starttls()
+            smtp.login(email,apppasswords)
+            smtp.sendmail(email,receiveremail,f"Subject: bot linked sender done\n\nbroo")
+
     driver.quit()
