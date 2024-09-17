@@ -1,0 +1,1 @@
+C:\Users\Administrator\Documents\throw\venv\Scripts\activate.bat && C:\Users\Administrator\Documents\throw\throw.py
