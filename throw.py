@@ -28,8 +28,8 @@ all_of_form_parts='div.jobs-easy-apply-form-section__grouping'
 submiter='''button[aria-label='Submit application']'''
 
 
-links_to_use=[float(i.replace('links_to_use_later_','').replace('.csv','')) for i in os.listdir() if 'links_to_use_later_' in i]
-df=pd.read_csv(f'links_to_use_later_{max(links_to_use)}.csv')
+links_to_use=[float(i.replace('links_to_use_later_','').replace('.csv','')) for i in os.listdir(r"Q:\server") if 'links_to_use_later_' in i]
+df=pd.read_csv(r"Q:\server\links_to_use_later_"+f'{max(links_to_use)}.csv')
 # todrop=df['jobs_link'].tolist()
 
 def get_id(url):
@@ -41,11 +41,11 @@ def get_id(url):
         return 'NaN'
 df['job_id']=df['jobs_link'].apply(get_id)
 df['sent']='No'
-df.to_csv(f'links_to_use_later_{max(links_to_use)}.csv',index=False)
+df.to_csv(r"Q:\server\links_to_use_later_"+f'{max(links_to_use)}.csv',index=False)
 newdrop=[i for i in df['job_id'].tolist() if i!='NaN']
 
-user_data_dir=r"C:\Users\TheQwertyPhoenix\AppData\Local\Google\Chrome\User Data"
-profile_directory='Profile 1'
+user_data_dir=r"C:\Users\Administrator\AppData\Local\Google\Chrome\User Data"
+profile_directory='Default'
 
 css_selector=selenium.webdriver.common.by.By.CSS_SELECTOR
 done_in=datetime.datetime.now()
@@ -71,10 +71,13 @@ def avoid_lock() -> None:
         x, _ = pyautogui.position()
         pyautogui.moveTo(x + 200, pyautogui.position().y, duration=1.0)
         pyautogui.moveTo(x, pyautogui.position().y, duration=0.5)
+        time.sleep(1)
         pyautogui.keyDown('ctrl')
+        time.sleep(1)
         pyautogui.press('esc')
+        time.sleep(1)
         pyautogui.keyUp('ctrl')
-        time.sleep(0.5)
+        time.sleep(1)
         pyautogui.press('esc')
 def load_page(driver, sleep=1):
         scroll_page = 0
@@ -175,7 +178,7 @@ if __name__ == '__main__':
                     form_intents=0
                     submit[0].click()
                     df.loc[df['job_id']==url,'sent']='Yes'
-                    df.to_csv(f'links_to_use_later_{max(links_to_use)}.csv',index=False)
+                    df.to_csv(r"Q:\server\links_to_use_later_"+f'{max(links_to_use)}.csv',index=False)
                     # time.sleep(10000)
 
                 time.sleep(3)
