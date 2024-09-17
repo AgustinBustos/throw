@@ -189,5 +189,5 @@ if __name__ == '__main__':
         except Exception as e:
             print(e)
             # time.sleep(100000)
-        time.sleep(10000)
+        # time.sleep(10000)
     driver.quit()
