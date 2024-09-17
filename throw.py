@@ -122,6 +122,7 @@ if __name__ == '__main__':
                     #just do send keys and select
                     answers=get_answers(str([i.get_attribute('outerHTML') for i in form_parts_with_errors]))
                     for index,i in enumerate(answers):
+                        #have to interact better
                         time.sleep(2)
                         select_element=form_parts_with_errors[index].find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,'select')
                         if select_element:
