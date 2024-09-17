@@ -94,6 +94,7 @@ if __name__ == '__main__':
     time.sleep(10)
     
     for url in newdrop:
+        time.sleep(random.choice([i for i in range(10)]))
         try:
             driver.get(url)
             
