@@ -87,7 +87,7 @@ def scroll_down(selected_to_scroll_from,driver):
         time.sleep(1)
      
 if __name__ == '__main__':
-    driver=open_browser(user_data_dir,profile_directory,'www.google.com')
+    driver=open_browser(user_data_dir,profile_directory,'https://www.google.com/')
     time.sleep(10)
     
     for url in newdrop:
