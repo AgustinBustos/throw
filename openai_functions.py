@@ -54,7 +54,7 @@ def get_answers(html):
             {"role": "system", "content": '''I will give you a list of HTML elements 
              from a form to complete, i will use selenium to complete element by element 
              using the following pseudo-code for i in result: if select_box:  select.select_by_visible_text(i) else: element.send_keys(i). Where result is the result of this function.
-             With respect to the answer, i want to get the job, so respond positevly, in general use 2 to 4 years of experience when asked but answer only one number, and the expected salary is 3000000. Very important, if there is a Select tag, then you have to choose the text of one of the options.'''},
+             With respect to the answer, i want to get the job, so respond positevly, in general use 2 to 4 years of experience when asked but answer only one number, and the expected salary is 3000000. Very important, if there is a Select Tag, then you HAVE to choose the text of one of the options Tags.'''},
             {"role": "user", "content": html},
         ],
         response_format=ListOfAnswers,
