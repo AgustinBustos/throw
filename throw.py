@@ -92,18 +92,25 @@ def scroll_down(selected_to_scroll_from,driver):
             .scroll_from_origin(scroll_origin, 0, 200)\
             .perform()
         time.sleep(1)
+def slow_type(element, text, delay=0.1):
+    """Send a text to an element one character at a time with a delay."""
+    for character in text:
+        element.send_keys(character)
+        time.sleep(delay)
 def responder(form_parts_with_errors,index,i):
     time.sleep(2)
     select_element=form_parts_with_errors[index].find_elements(css_selector,'select')
     input_elements=form_parts_with_errors[index].find_elements(css_selector,'input')
     textarea=form_parts_with_errors[index].find_elements(css_selector,'textarea')
     if textarea:
-        textarea[0].send_keys(i)
+        slow_type(textarea[0], i)
+        # textarea[0].send_keys(i)
     elif select_element:
         select = Select(select_element[0])
         select.select_by_visible_text(i)
-    elif len(input_elements)==1:   
-        input_elements[0].send_keys(i)
+    elif len(input_elements)==1:  
+        slow_type(input_elements[0],i) 
+        # input_elements[0].send_keys(i)
     else:
         labeling=form_parts_with_errors[index].find_elements(css_selector,'label')
         labeling[0].click()
@@ -112,6 +119,7 @@ def responder(form_parts_with_errors,index,i):
             labeling=form_parts_with_errors[index].find_elements(css_selector,'label')
             if labeling[j].text==i:
                 labeling[j].click()    
+
 if __name__ == '__main__':
     driver=open_browser(user_data_dir,profile_directory,'https://www.google.com/')
     time.sleep(10)
