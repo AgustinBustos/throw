@@ -204,7 +204,7 @@ if __name__ == '__main__':
             
             smtp.starttls()
             smtp.login(email,apppasswords)
-            smtp.sendmail(email,receiveremail,f"Subject: bot linked scrap done\n\nbroo"+str(all_errors))
+            smtp.sendmail(email,receiveremail,f"Subject: bot linked sender error\n\nbroo"+str(all_errors))
     else:
         with SMTP('smtp.gmail.com', 587) as smtp:
             
