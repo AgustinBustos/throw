@@ -21,6 +21,7 @@ next_button_selector="button[aria-label='Continue to next step']"
 review_button_selector="button[aria-label='Review your application']"
 error_in_task='''div[role='alert'] li-icon[aria-hidden="true"]'''
 all_of_form_parts='div.jobs-easy-apply-form-section__grouping'
+submiter='''button[aria-label='Submit application']'''
 
 
 links_to_use=[float(i.replace('links_to_use_later_','').replace('.csv','')) for i in os.listdir() if 'links_to_use_later_' in i]
@@ -104,12 +105,26 @@ if __name__ == '__main__':
             review=driver.find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,review_button_selector)
             form_parts=driver.find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,all_of_form_parts)
             form_parts_with_errors=[i for i in form_parts if i.find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,error_in_task)]
+            submit=driver.find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,submiter)
             if form_parts_with_errors:
                 form_intents+=1
                 if form_intents>=2:
                     break
                 #just do send keys and select
-                print(get_answers(str([i.get_attribute('outerHTML') for i in form_parts_with_errors])))
+                answers=get_answers(str([i.get_attribute('outerHTML') for i in form_parts_with_errors]))
+                for index,i in enumerate(answers):
+                    time.sleep(2)
+                    select_element=form_parts_with_errors[index].find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,'select')
+                    if select_element:
+                        select = selenium.webdriver.support.ui.Select(select_element[0])
+                        select.select_by_visible_text(i)
+                    else:   
+                        form_parts_with_errors[index].find_element(selenium.webdriver.common.by.By.CSS_SELECTOR,'input').send_keys(i)
+                time.sleep(2)
+                if next_page:
+                    next_page[0].click()
+                else:
+                    review[0].click()     
                 # time.sleep(10000)
             elif next_page:
                 form_intents=0
@@ -117,15 +132,18 @@ if __name__ == '__main__':
             elif review:
                 form_intents=0
                 review[0].click()
+            elif submit:
+                form_intents=0
+                submit[0].click()
                 # time.sleep(10000)
 
             time.sleep(3)
             # time.sleep(100000)
 
-        html = driver.page_source
-        simplified_html=html_mini_remover(html)
-        # print(len(html),len(simplified_html))
-        # print(len(easy_apply_button)) #.click()
+        # html = driver.page_source
+        # simplified_html=html_mini_remover(html)
+        # # print(len(html),len(simplified_html))
+        # # print(len(easy_apply_button)) #.click()
 
-        time.sleep(100000)
+        # time.sleep(100000)
 
