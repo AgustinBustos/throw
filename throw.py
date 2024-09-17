@@ -16,6 +16,7 @@ from openai_functions import get_job_links,get_easy_apply_xpath,get_answers
 import pandas as pd
 import datetime
 from selenium.webdriver.support.ui import Select
+pyautogui.FAILSAFE = False
 
 
 
@@ -140,7 +141,7 @@ if __name__ == '__main__':
             driver.find_element(css_selector,easy_apply_selector).click()
             time.sleep(3)
             form_intents=0
-            for i in range(10):
+            for i in range(15):
                 next_page=driver.find_elements(css_selector,next_button_selector)
                 review=driver.find_elements(css_selector,review_button_selector)
                 form_parts=driver.find_elements(css_selector,all_of_form_parts)
@@ -187,7 +188,8 @@ if __name__ == '__main__':
 
             # time.sleep(100000)
         except Exception as e:
-            print(e)
+            time.sleep(1)
+            # print(e)
             # time.sleep(100000)
         # time.sleep(10000)
     driver.quit()
