@@ -15,6 +15,7 @@ import openai
 from openai_functions import get_job_links,get_easy_apply_xpath,get_answers
 import pandas as pd
 import datetime
+from selenium.webdriver.support.ui import Select
 
 easy_apply_selector='div.p5  button.jobs-apply-button'
 next_button_selector="button[aria-label='Continue to next step']"
@@ -123,7 +124,7 @@ if __name__ == '__main__':
                         time.sleep(2)
                         select_element=form_parts_with_errors[index].find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,'select')
                         if select_element:
-                            select = selenium.webdriver.support.ui.Select(select_element[0])
+                            select = Select(select_element[0])
                             select.select_by_visible_text(i)
                         else:   
                             form_parts_with_errors[index].find_element(selenium.webdriver.common.by.By.CSS_SELECTOR,'input').send_keys(i)
