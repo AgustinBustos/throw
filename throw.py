@@ -17,6 +17,8 @@ import pandas as pd
 import datetime
 from selenium.webdriver.support.ui import Select
 
+
+
 easy_apply_selector='div.p5  button.jobs-apply-button'
 next_button_selector="button[aria-label='Continue to next step']"
 review_button_selector="button[aria-label='Review your application']"
@@ -28,6 +30,7 @@ submiter='''button[aria-label='Submit application']'''
 links_to_use=[float(i.replace('links_to_use_later_','').replace('.csv','')) for i in os.listdir() if 'links_to_use_later_' in i]
 df=pd.read_csv(f'links_to_use_later_{max(links_to_use)}.csv')
 # todrop=df['jobs_link'].tolist()
+
 def get_id(url):
     try:
         splitted=url.split('/')
@@ -43,6 +46,7 @@ newdrop=[i for i in df['job_id'].tolist() if i!='NaN']
 user_data_dir=r"C:\Users\TheQwertyPhoenix\AppData\Local\Google\Chrome\User Data"
 profile_directory='Profile 1'
 
+css_selector=selenium.webdriver.common.by.By.CSS_SELECTOR
 done_in=datetime.datetime.now()
 def open_browser(user_data_dir,profile_directory,url):
 # log = logging.getLogger(__name__)
@@ -88,7 +92,26 @@ def scroll_down(selected_to_scroll_from,driver):
             .scroll_from_origin(scroll_origin, 0, 200)\
             .perform()
         time.sleep(1)
-     
+def responder(form_parts_with_errors,index,i):
+    time.sleep(2)
+    select_element=form_parts_with_errors[index].find_elements(css_selector,'select')
+    input_elements=form_parts_with_errors[index].find_elements(css_selector,'input')
+    textarea=form_parts_with_errors[index].find_elements(css_selector,'textarea')
+    if textarea:
+        textarea[0].send_keys(i)
+    elif select_element:
+        select = Select(select_element[0])
+        select.select_by_visible_text(i)
+    elif len(input_elements)==1:   
+        input_elements[0].send_keys(i)
+    else:
+        labeling=form_parts_with_errors[index].find_elements(css_selector,'label')
+        labeling[0].click()
+        for j in range(len(labeling)):
+            time.sleep(1)
+            labeling=form_parts_with_errors[index].find_elements(css_selector,'label')
+            if labeling[j].text==i:
+                labeling[j].click()    
 if __name__ == '__main__':
     driver=open_browser(user_data_dir,profile_directory,'https://www.google.com/')
     time.sleep(10)
@@ -106,30 +129,27 @@ if __name__ == '__main__':
             # button_xpath=get_easy_apply_xpath(simplified_html)
             # print(button_xpath)
             time.sleep(3)
-            driver.find_element(selenium.webdriver.common.by.By.CSS_SELECTOR,easy_apply_selector).click()
+            driver.find_element(css_selector,easy_apply_selector).click()
             time.sleep(3)
             form_intents=0
             for i in range(10):
-                next_page=driver.find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,next_button_selector)
-                review=driver.find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,review_button_selector)
-                form_parts=driver.find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,all_of_form_parts)
-                form_parts_with_errors=[i for i in form_parts if i.find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,error_in_task)]
-                submit=driver.find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,submiter)
+                next_page=driver.find_elements(css_selector,next_button_selector)
+                review=driver.find_elements(css_selector,review_button_selector)
+                form_parts=driver.find_elements(css_selector,all_of_form_parts)
+                form_parts_with_errors=[i for i in form_parts if i.find_elements(css_selector,error_in_task)]
+                submit=driver.find_elements(css_selector,submiter)
                 if form_parts_with_errors:
                     form_intents+=1
                     if form_intents>=2:
                         break
                     #just do send keys and select
                     answers=get_answers(str([i.get_attribute('outerHTML') for i in form_parts_with_errors]))
+                    # print(answers)
                     for index,i in enumerate(answers):
                         #have to interact better
-                        time.sleep(2)
-                        select_element=form_parts_with_errors[index].find_elements(selenium.webdriver.common.by.By.CSS_SELECTOR,'select')
-                        if select_element:
-                            select = Select(select_element[0])
-                            select.select_by_visible_text(i)
-                        else:   
-                            form_parts_with_errors[index].find_element(selenium.webdriver.common.by.By.CSS_SELECTOR,'input').send_keys(i)
+                        responder(form_parts_with_errors,index,i)
+                        
+
                     time.sleep(2)
                     if next_page:
                         next_page[0].click()
@@ -161,4 +181,5 @@ if __name__ == '__main__':
         except Exception as e:
             print(e)
             # time.sleep(100000)
+        time.sleep(10000)
     driver.quit()
