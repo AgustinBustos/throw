@@ -87,8 +87,12 @@ def scroll_down(selected_to_scroll_from,driver):
         time.sleep(1)
      
 if __name__ == '__main__':
+    driver=open_browser(user_data_dir,profile_directory,'www.google.com')
+    time.sleep(10)
+    
     for url in newdrop:
-        driver=open_browser(user_data_dir,profile_directory,url)
+        driver.get(url)
+        
         # print('lock')
         avoid_lock()
         fill_data(driver)
@@ -146,4 +150,4 @@ if __name__ == '__main__':
         # # print(len(easy_apply_button)) #.click()
 
         # time.sleep(100000)
-
+    driver.quit()
